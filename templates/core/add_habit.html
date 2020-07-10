@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Habits{% endblock title %}
+
+{% block content %}
+<div>
+    <form action="{% url 'add_habit' %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <br><br>
+        <div>
+            <button type="submit">Add Habit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

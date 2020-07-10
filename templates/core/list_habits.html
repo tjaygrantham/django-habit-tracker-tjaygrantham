@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load mytags %}
+{% load static %}
+
+{% block javascript %}
+<script src="{% static 'js/show_habit.js' %}" defer></script>
+{% endblock javascript %}
+
+{% block title %}Habits{% endblock title %}
+
+{% block content %}
+<h1 class="display-4">Habits</h1>
+<a class="toggleformbtn text-decoration-none" href="#"><i class="fas fa-plus"></i> New Habit</a>
+<br>
+<form style="display: none;" action="{% url 'add_habit' %}" method="POST">
+    <br>
+    {% csrf_token %}
+    {{ habit_form }}
+    <br><br>
+    <div>
+        <button class="toggleformbtn">Cancel</button>
+        <button type="submit">Add Habit</button>
+    </div>
+</form>
+<div class="d-flex flex-wrap justify-content-around">
+    {% for habit in habits %}
+    <div class="my-4 habit bg-secondary p-3 border border-primary rounded-lg">
+        <p class="h5 text-white">
+            <span>Goal: </span>
+            {{ habit.action|capfirst }}
+            {% if habit.lesser %}
+                less than
+            {% endif %}
+            {{ habit.goal|floatformat:0 }}
+            {% if habit.goal > 1 %}
+                {{ habit.unit|inflect:"NNS" }}
+            {% else %}
+                {{ habit.unit }}
+            {% endif %}
+            every
+            {{ habit.period }}
+        </p>
+        <a class="text-decoration-none" href="{% url 'show_habit' pk=habit.pk %}">View progress / Add record</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock content %}

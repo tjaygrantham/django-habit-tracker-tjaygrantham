@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load mytags %}
+
+{% block title %}Habits{% endblock title %}
+
+{% block content %}
+<div>
+    <form action="{% url 'add_record' pk=habit.pk %}" method="POST">
+        {% csrf_token %}
+        {{ form.quantity.label }} {{ habit.action|inflect:"VBD" }} {{ form.quantity }} {{ habit.unit }}({{ habit.unit|suffix }})
+        {{ form.added.label }} {{ form.added }}
+        <br><br>
+        <div>
+            <button type="submit">Add Record</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

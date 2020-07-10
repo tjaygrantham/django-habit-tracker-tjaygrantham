@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+{% load mytags %}
+
+{% block title %}Habits{% endblock title %}
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/moment@2.27.0/moment.min.js"></script>
+<script src="{% static 'js/show_habit.js' %}" defer>
+</script>
+<script>
+    let records = JSON.parse('{{records}}'.replace(/(&quot\;)/g,"\""))
+    let unitLabel = '{{ habit.unit|inflect:"NNS"|capfirst }}'
+</script>
+{% endblock javascript %}
+
+{% block content %}
+<h1 class="display-4">
+    {{ habit.action|capfirst }}
+    {% if habit.lesser %}
+        less than
+    {% endif %}
+    {{ habit.goal|toint }}
+    {% if habit.goal > 1 %}
+        {{ habit.unit|inflect:"NNS" }}
+    {% else %}
+        {{ habit.unit }}
+    {% endif %}
+    every
+    {{ habit.period }}
+</h1>
+<a href="#" class="toggleformbtn text-decoration-none"><i class="fas fa-plus"></i> Add Record</a>
+<br>
+<form style="display: none;" action="{% url 'add_record' pk=habit.pk %}" method="POST">
+    <br>
+    {% csrf_token %}
+    {{ record_form.quantity.label }} {{ habit.action|inflect:"VBD" }} {{ record_form.quantity }} {{ habit.unit|suffix }}(s)
+    {{ record_form.added.label }} {{ record_form.added }}
+    <br><br>
+    <div>
+        <button class="toggleformbtn">Cancel</button>
+        <button type="submit">Add Record</button>
+    </div>
+</form>
+<br>
+{% with records=habit.records.all|sort_descending:"added" %}
+{% if records|length > 0 %}
+<p>
+    <i class="fas fa-chart-line"></i>
+    {% with highest=records|highest %}
+    Your best record was
+    {{ highest.quantity|toint }}
+    {% if highest.quantity > 1 %}
+        {{ habit.unit|inflect:"NNS" }}
+    {% else %}
+        {{ habit.unit }}
+    {% endif %}
+    on
+    {{ highest.added }}
+    {% endwith %}
+</p>
+<p>
+    <i class="fas fa-calendar-day"></i>
+    {% with average=records|average %}
+    You average about
+    {{ average|toint }}
+    {% if average > 1 %}
+        {{ habit.unit|inflect:"NNS" }}
+    {% else %}
+        {{ habit.unit }}
+    {% endif %}
+    per
+    {{ habit.period }}
+    {% endwith %}
+</p>
+{% endif %}
+{% with weekly=records|weekly %}
+{% if weekly|length > 0 %}
+<h3>This week's progress</h3>
+{% for record in  weekly %}
+    <p class="text-muted">
+    <i class="fas {{ record.goal_met|yesno:'fa-check text-success,fa-times text-danger' }}"></i>
+    You
+    {{ habit.action|inflect:"VBD" }}
+    {{ record.quantity|toint }}
+    {% if record.quantity > 1 %}
+        {{ habit.unit|inflect:"NNS" }}
+    {% else %}
+        {{ habit.unit }}
+    {% endif %}
+    on
+    {{ record.added|date:"F j, Y" }}
+    </p>
+{% endfor %}
+{% endif %}
+{% endwith %}
+{% if records|length > 0 %}
+<br><br>
+<h4>This month's progress</h4>
+<canvas id="record-chart" width="400" height="100"></canvas>
+{% endif %}
+{% endwith %}
+{% endblock content %}

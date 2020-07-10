@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load mytags %}
+
+{% block title %}Habits{% endblock title %}
+
+{% block content %}
+<div>
+    <form action="{% url 'edit_habit' pk=habit.pk %}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <br><br>
+        <div>
+            <button type="submit">Save Habit</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

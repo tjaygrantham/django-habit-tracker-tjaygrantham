@@ -1,0 +1,39 @@
+{% load static %}
+{% load tz %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block meta %} {% endblock meta %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    {% block javascript %}
+    {% endblock javascript %}
+    <title>{% block title %}{% endblock title %}</title>
+</head>
+<body class="bg-light text-muted">
+    <nav class="navbar navbar-default bg-dark border-bottom border-primary">
+        <div class="my-2 container-fluid">
+            <div class="">
+                <a class="text-decoration-none" href="{% url 'home' %}" title="Home">
+                    Home
+                </a>
+            </div>
+            <div class=>
+                {% if user.is_authenticated %}
+                    <p class="mb-0 text-white">Welcome, {{ user }}!&emsp;<a class="text-decoration-none" href="{% url 'auth_logout' %}">Logout</a></p>
+                {% else %}
+                    <a class="text-decoration-none" href="{% url 'auth_login' %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    <main class="mt-4 ml-4">
+        {% block content %}
+        {% endblock content %}
+    </main>
+</body>
+</html>
